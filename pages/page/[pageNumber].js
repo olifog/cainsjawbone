@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import Page from 'models/Page'
+import PageDisplay from 'components/PageDisplay'
 import dbConnect from 'lib/dbConnect'
 import Loading from 'components/Loading'
 
@@ -10,9 +11,9 @@ const PageView = ({ text, pageNumber }) => {
   }
 
   return (
-    <div>
-      <h1>Page {pageNumber}</h1>
-      <p>{text}</p>
+    <div className="flex flex-col items-center w-screen h-screen space-y-6 py-10">
+      <h1 className="font-semibold">Page {pageNumber}</h1>
+      <PageDisplay pageNumber={pageNumber} text={text} />
     </div>
   )
 }
