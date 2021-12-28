@@ -1,22 +1,26 @@
 import { useRouter } from 'next/router'
-import host from 'utils/host'
+import Page from 'models/Page'
+import dbConnect from 'lib/dbConnect'
 import Loading from 'components/Loading'
 
-
-const Page = (page) => {
+const PageView = ({ text, pageNumber }) => {
   const router = useRouter()
   if (router.isFallback) {
     return <Loading />
   }
 
-  const { pageNumber } = router.query
-  return <p>Page: {pageNumber}</p>
+  return (
+    <div>
+      <h1>Page {pageNumber}</h1>
+      <p>{text}</p>
+    </div>
+  )
 }
 
-
 export async function getStaticProps (context) {
-  const res = await fetch(`${host}/api/pages/${context.params.pageNumber}`)
-  const page = await res.json()
+  await dbConnect()
+  const page = await Page.findOne({ pageNumber: context.params.pageNumber }).lean()
+  page._id = page._id.toString()
 
   if (!page) {
     return {
@@ -25,25 +29,20 @@ export async function getStaticProps (context) {
   }
 
   return {
-    props: {
-      page
-    },
+    props: page,
     revalidate: 10
   }
 }
 
-
 export async function getStaticPaths () {
-  const res = await fetch(`${host}/api/pages`)
-  const pages = await res.json()
+  await dbConnect()
+  const pages = await Page.find({}).lean()
 
   const paths = pages.map((page) => ({
     params: { pageNumber: page.pageNumber.toString() },
   }))
 
-  return { paths, fallback: true }
+  return { paths, fallback: 'blocking' }
 }
 
-
-export default Page
-
+export default PageView
