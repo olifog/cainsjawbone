@@ -48,7 +48,7 @@ const PageDisplay = ({ pageNumber, text }) => {
                   <div key={idx} className="flex flex-row justify-between">
                     {
                       item.split(" ").map((word, idy) => (
-                        <Word key={idy} text={word + " "} />
+                        <Word key={idy} text={word} />
                       ))
                     }
                   </div>
